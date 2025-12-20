@@ -1,0 +1,79 @@
+
+<app-header></app-header>
+
+<div class="app-shell">
+  <div class="page-head">
+    <div>
+      <h2 class="page-title">{{ record?.title | lowercase }}</h2>
+      <p class="page-subtitle">{{ record?.artist }}</p>
+    </div>
+    <a class="btn btn-light" routerLink="/records">Back</a>
+  </div>
+
+  <div class="row g-4">
+    <div class="col-12 col-lg-7">
+      <div class="card card-premium">
+        <div class="card-body">
+          <div class="section-label">Record information</div>
+
+          <div class="row g-3">
+            <div class="col-md-6">
+              <div class="small-help">Genre</div>
+              <div class="fw-bold">{{ record?.genre }}</div>
+            </div>
+            <div class="col-md-6">
+              <div class="small-help">Format</div>
+              <div class="fw-bold">{{ record?.format }}</div>
+            </div>
+            <div class="col-md-6">
+              <div class="small-help">Release Year</div>
+              <div class="fw-bold">{{ record?.releaseYear }}</div>
+            </div>
+            <div class="col-md-6">
+              <div class="small-help">Price</div>
+              <div class="fw-bold">{{ record?.price }}</div>
+            </div>
+            <div class="col-md-12">
+              <div class="small-help">Stock</div>
+              <span class="badge badge-pill badge-soft-orange">
+                {{ record?.stockQuantity | stockStatus }}
+              </span>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <div class="col-12 col-lg-5">
+      <div class="card card-premium">
+        <div class="card-body">
+          <div class="section-label">Customer</div>
+
+          <div class="mb-3">
+            <div class="small-help">Customer ID</div>
+            <div class="fw-bold">{{ record?.customer?.customerId }}</div>
+          </div>
+
+          <div class="mb-3">
+            <div class="small-help">Name</div>
+            <div class="fw-bold">
+              {{ record?.customer?.firstName }} {{ record?.customer?.lastName }}
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <div class="small-help">Email</div>
+            <div class="fw-bold">{{ record?.customer?.email }}</div>
+          </div>
+
+          <div class="mb-0">
+            <div class="small-help">Contact</div>
+            <div class="fw-bold">{{ record?.customer?.contactNumber }}</div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,111 @@
+<app-header></app-header>
+
+<div class="app-shell">
+  <div class="page-head">
+    <div>
+      <h2 class="page-title">Update Record</h2>
+      <p class="page-subtitle">Edit record and customer information.</p>
+    </div>
+    <a class="btn btn-light" routerLink="/records">Back</a>
+  </div>
+
+  <div class="card card-premium">
+    <div class="card-body">
+
+      <form [formGroup]="form" (ngSubmit)="submit()">
+
+        <div class="row g-4">
+
+          <div class="col-12 col-lg-6">
+            <div class="section-label">Record details</div>
+
+            <div class="mb-3">
+              <label class="form-label fw-bold">Title</label>
+              <input class="form-control" formControlName="title">
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label fw-bold">Artist</label>
+              <input class="form-control" formControlName="artist">
+            </div>
+
+            <div class="row g-3">
+              <div class="col-md-6">
+                <label class="form-label fw-bold">Format</label>
+                <select class="form-select" formControlName="format">
+                  <option value="">Select format</option>
+                  <option *ngFor="let f of formats" [value]="f">{{ f }}</option>
+                </select>
+              </div>
+
+              <div class="col-md-6">
+                <label class="form-label fw-bold">Genre</label>
+                <select class="form-select" formControlName="genre">
+                  <option value="">Select genre</option>
+                  <option *ngFor="let g of genres" [value]="g">{{ g }}</option>
+                </select>
+              </div>
+
+              <div class="col-md-4">
+                <label class="form-label fw-bold">Release Year</label>
+                <input class="form-control" formControlName="releaseYear">
+              </div>
+
+              <div class="col-md-4">
+                <label class="form-label fw-bold">Price</label>
+                <input class="form-control" formControlName="price">
+              </div>
+
+              <div class="col-md-4">
+                <label class="form-label fw-bold">Stock Qty</label>
+                <input class="form-control" formControlName="stockQuantity">
+              </div>
+            </div>
+          </div>
+
+          <div class="col-12 col-lg-6">
+            <div class="section-label">Customer details</div>
+
+            <div class="mb-3">
+              <label class="form-label fw-bold">Customer ID</label>
+              <input class="form-control" formControlName="customerId">
+            </div>
+
+            <div class="row g-3">
+              <div class="col-md-6">
+                <label class="form-label fw-bold">First Name</label>
+                <input class="form-control" formControlName="firstName">
+              </div>
+              <div class="col-md-6">
+                <label class="form-label fw-bold">Last Name</label>
+                <input class="form-control" formControlName="lastName">
+              </div>
+
+              <div class="col-md-12">
+                <label class="form-label fw-bold">Contact Number</label>
+                <input class="form-control" formControlName="contactNumber">
+              </div>
+
+              <div class="col-md-12">
+                <label class="form-label fw-bold">Email</label>
+                <input class="form-control" formControlName="email">
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <hr class="hr-soft">
+
+        <div class="d-flex justify-content-end gap-2">
+          <a class="btn btn-light" routerLink="/records">Cancel</a>
+          <button class="btn btn-warning px-4" [disabled]="form.invalid">
+            Update
+          </button>
+        </div>
+
+      </form>
+
+    </div>
+  </div>
+</div>
