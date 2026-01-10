@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -9,26 +9,29 @@ import { Auth } from '../../services/auth';
   imports: [CommonModule, FormsModule],
   templateUrl: './login.html'
 })
-export class Login {
+export class Login implements OnInit {
+
   email = '';
   password = '';
   error = '';
 
   constructor(private auth: Auth, private router: Router) {}
 
-  submit() {
+  ngOnInit(): void {
+    if (this.auth.isLoggedIn()) {
+      this.router.navigate(['/records']);
+    }
+  }
+
+  submit(): void {
     this.error = '';
 
-    const email = this.email.trim();
-    const password = this.password.trim();
-
-    this.auth.login(email, password).subscribe({
+    this.auth.login(this.email.trim(), this.password.trim()).subscribe({
       next: (res) => {
         this.auth.saveSession(res);
         this.router.navigate(['/records']);
       },
       error: (err) => {
-        // backend returns { message: 'Invalid email or password.' }
         this.error = err?.error?.message || 'Login failed';
       }
     });

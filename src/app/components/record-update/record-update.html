@@ -16,6 +16,7 @@
 
         <div class="row g-4">
 
+          <!-- LEFT -->
           <div class="col-12 col-lg-6">
             <div class="section-label">Record details</div>
 
@@ -52,7 +53,7 @@
               </div>
 
               <div class="col-md-4">
-                <label class="form-label fw-bold">Price</label>
+                <label class="form-label fw-bold">Price (€)</label>
                 <input class="form-control" formControlName="price">
               </div>
 
@@ -63,6 +64,7 @@
             </div>
           </div>
 
+          <!-- RIGHT -->
           <div class="col-12 col-lg-6">
             <div class="section-label">Customer details</div>
 
@@ -76,14 +78,33 @@
                 <label class="form-label fw-bold">First Name</label>
                 <input class="form-control" formControlName="firstName">
               </div>
+
               <div class="col-md-6">
                 <label class="form-label fw-bold">Last Name</label>
                 <input class="form-control" formControlName="lastName">
               </div>
 
+              <!-- 📞 CONTACT NUMBER -->
               <div class="col-md-12">
                 <label class="form-label fw-bold">Contact Number</label>
-                <input class="form-control" formControlName="contactNumber">
+
+                <div class="input-group">
+                  <select
+                    class="form-select"
+                    style="max-width: 160px"
+                    formControlName="countryCode"
+                  >
+                    <option *ngFor="let c of countryCodes" [value]="c.code">
+                      {{ c.label }}
+                    </option>
+                  </select>
+
+                  <input
+                    class="form-control"
+                    formControlName="contactNumber"
+                    placeholder="77123456"
+                  >
+                </div>
               </div>
 
               <div class="col-md-12">

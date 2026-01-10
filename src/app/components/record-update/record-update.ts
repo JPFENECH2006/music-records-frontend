@@ -1,10 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, Validators, FormGroup } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { Records } from '../../services/records';
 import { Header } from '../header/header';
-import { RouterLink } from '@angular/router';
 
 @Component({
   standalone: true,
@@ -17,6 +16,14 @@ export class RecordUpdate implements OnInit {
   formats: string[] = [];
   genres: string[] = [];
 
+  // 🌍 SAME country codes as ADD
+  countryCodes = [
+    { code: '+356', label: 'Malta (+356)' },
+    { code: '+44', label: 'UK (+44)' },
+    { code: '+39', label: 'Italy (+39)' },
+    { code: '+49', label: 'Germany (+49)' }
+  ];
+
   form!: FormGroup;
 
   constructor(
@@ -26,10 +33,9 @@ export class RecordUpdate implements OnInit {
     private router: Router
   ) {}
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.id = Number(this.route.snapshot.paramMap.get('id'));
 
-    // ✅ Initialize form AFTER fb exists
     this.form = this.fb.group({
       title: ['', Validators.required],
       artist: ['', Validators.required],
@@ -42,7 +48,11 @@ export class RecordUpdate implements OnInit {
       customerId: ['', [Validators.required, Validators.pattern(/^[0-9]+[A-Za-z]$/)]],
       firstName: ['', Validators.required],
       lastName: ['', Validators.required],
+
+      // 👇 split phone
+      countryCode: ['+356', Validators.required],
       contactNumber: ['', [Validators.required, Validators.pattern(/^[0-9]{8,}$/)]],
+
       email: ['', [Validators.required, Validators.email]]
     });
 
@@ -50,41 +60,60 @@ export class RecordUpdate implements OnInit {
     this.rs.genres().subscribe(g => this.genres = g);
 
     this.rs.get(this.id).subscribe(r => {
+      const phone = r.customer?.contactNumber || '';
+
+      // 🧠 split +code from number
+      let countryCode = '+356';
+      let localNumber = phone;
+
+      if (phone.startsWith('+')) {
+        const match = this.countryCodes.find(c => phone.startsWith(c.code));
+        if (match) {
+          countryCode = match.code;
+          localNumber = phone.replace(match.code, '');
+        }
+      }
+
       this.form.patchValue({
         title: r.title,
         artist: r.artist,
         format: r.format,
         genre: r.genre,
-        releaseYear: String(r.releaseYear),      // ✅ FIX
-        price: String(r.price),                  // ✅ FIX
-        stockQuantity: String(r.stockQuantity),  // ✅ FIX
+        releaseYear: String(r.releaseYear),
+        price: String(r.price),
+        stockQuantity: String(r.stockQuantity),
+
         customerId: r.customer?.customerId,
         firstName: r.customer?.firstName,
         lastName: r.customer?.lastName,
-        contactNumber: r.customer?.contactNumber,
+
+        countryCode,
+        contactNumber: localNumber,
+
         email: r.customer?.email
       });
     });
   }
 
-  submit() {
+  submit(): void {
     if (this.form.invalid) return;
 
     const v = this.form.value;
+    const fullContactNumber = `${v.countryCode}${v.contactNumber}`;
 
     this.rs.update(this.id, {
       title: v.title,
       artist: v.artist,
       format: v.format,
       genre: v.genre,
-      releaseYear: Number(v.releaseYear),   // convert back to number
+      releaseYear: Number(v.releaseYear),
       price: Number(v.price),
       stockQuantity: Number(v.stockQuantity),
       customer: {
         customerId: v.customerId,
         firstName: v.firstName,
         lastName: v.lastName,
-        contactNumber: v.contactNumber,
+        contactNumber: fullContactNumber,
         email: v.email
       }
     }).subscribe(() => this.router.navigate(['/records']));

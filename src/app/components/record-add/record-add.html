@@ -45,10 +45,6 @@
                   <option value="">Select format</option>
                   <option *ngFor="let f of formats" [value]="f">{{ f }}</option>
                 </select>
-                <div class="text-danger small mt-1"
-                     *ngIf="form.get('format')?.touched && form.get('format')?.invalid">
-                  Format is required
-                </div>
               </div>
 
               <div class="col-md-6">
@@ -57,37 +53,21 @@
                   <option value="">Select genre</option>
                   <option *ngFor="let g of genres" [value]="g">{{ g }}</option>
                 </select>
-                <div class="text-danger small mt-1"
-                     *ngIf="form.get('genre')?.touched && form.get('genre')?.invalid">
-                  Genre is required
-                </div>
               </div>
 
               <div class="col-md-4">
                 <label class="form-label fw-bold">Release Year</label>
                 <input class="form-control" formControlName="releaseYear" placeholder="2001">
-                <div class="text-danger small mt-1"
-                     *ngIf="form.get('releaseYear')?.touched && form.get('releaseYear')?.invalid">
-                  Required
-                </div>
               </div>
 
               <div class="col-md-4">
-                <label class="form-label fw-bold">Price</label>
+                <label class="form-label fw-bold">Price (€)</label>
                 <input class="form-control" formControlName="price" placeholder="19.99">
-                <div class="text-danger small mt-1"
-                     *ngIf="form.get('price')?.touched && form.get('price')?.invalid">
-                  Required
-                </div>
               </div>
 
               <div class="col-md-4">
                 <label class="form-label fw-bold">Stock Qty</label>
                 <input class="form-control" formControlName="stockQuantity" placeholder="5">
-                <div class="text-danger small mt-1"
-                     *ngIf="form.get('stockQuantity')?.touched && form.get('stockQuantity')?.invalid">
-                  Required
-                </div>
               </div>
             </div>
           </div>
@@ -99,34 +79,41 @@
             <div class="mb-3">
               <label class="form-label fw-bold">Customer ID</label>
               <input class="form-control" formControlName="customerId" placeholder="1234A">
-              <div class="text-danger small mt-1"
-                   *ngIf="form.get('customerId')?.touched && form.get('customerId')?.invalid">
-                Numbers followed by a letter
-              </div>
             </div>
 
             <div class="row g-3">
               <div class="col-md-6">
                 <label class="form-label fw-bold">First Name</label>
-                <input class="form-control" formControlName="firstName" placeholder="First Name">
-                <div class="text-danger small mt-1"
-                     *ngIf="form.get('firstName')?.touched && form.get('firstName')?.invalid">
-                  Required
-                </div>
+                <input class="form-control" formControlName="firstName">
               </div>
 
               <div class="col-md-6">
                 <label class="form-label fw-bold">Last Name</label>
-                <input class="form-control" formControlName="lastName" placeholder="Last Name">
-                <div class="text-danger small mt-1"
-                     *ngIf="form.get('lastName')?.touched && form.get('lastName')?.invalid">
-                  Required
-                </div>
+                <input class="form-control" formControlName="lastName">
               </div>
 
+              <!-- 📞 CONTACT NUMBER WITH COUNTRY CODE -->
               <div class="col-md-12">
                 <label class="form-label fw-bold">Contact Number</label>
-                <input class="form-control" formControlName="contactNumber" placeholder="77123456">
+
+                <div class="input-group">
+                  <select
+                    class="form-select"
+                    style="max-width: 160px"
+                    formControlName="countryCode"
+                  >
+                    <option *ngFor="let c of countryCodes" [value]="c.code">
+                      {{ c.label }}
+                    </option>
+                  </select>
+
+                  <input
+                    class="form-control"
+                    formControlName="contactNumber"
+                    placeholder="77123456"
+                  >
+                </div>
+
                 <div class="text-danger small mt-1"
                      *ngIf="form.get('contactNumber')?.touched && form.get('contactNumber')?.invalid">
                   Numeric, at least 8 digits
@@ -135,14 +122,9 @@
 
               <div class="col-md-12">
                 <label class="form-label fw-bold">Email</label>
-                <input class="form-control" formControlName="email" placeholder="name@email.com">
-                <div class="text-danger small mt-1"
-                     *ngIf="form.get('email')?.touched && form.get('email')?.invalid">
-                  Invalid email
-                </div>
+                <input class="form-control" formControlName="email">
               </div>
             </div>
-
           </div>
         </div>
 
