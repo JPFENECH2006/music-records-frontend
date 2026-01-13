@@ -32,6 +32,18 @@
     </div>
   </div>
 
+  <!-- SUCCESS MESSAGE -->
+  <div
+    *ngIf="successMessage"
+    class="alert alert-success alert-dismissible fade show">
+    {{ successMessage }}
+    <button
+      type="button"
+      class="btn-close"
+      (click)="successMessage = ''">
+    </button>
+  </div>
+
   <div class="card card-premium">
     <div class="card-body p-0">
       <div class="table-wrap">
@@ -56,14 +68,12 @@
               <td>{{ r.genre }}</td>
 
               <td class="text-end pe-3">
-                <!-- VIEW (ALL USERS) -->
                 <a
                   class="btn btn-sm btn-outline-primary me-2"
                   [routerLink]="['/records/view', r.id]">
                   View
                 </a>
 
-                <!-- UPDATE (DISABLED FOR SALESPERSON) -->
                 <a
                   class="btn btn-sm btn-outline-warning me-2"
                   [routerLink]="['/records/update', r.id]"
@@ -72,10 +82,9 @@
                   Update
                 </a>
 
-                <!-- DELETE (ADMIN ONLY – DISABLED, NOT HIDDEN) -->
                 <button
                   class="btn btn-sm btn-outline-danger"
-                  (click)="remove(r.id)"
+                  (click)="askDelete(r.id)"
                   [disabled]="auth.role() !== 'SystemAdmin'"
                   [attr.title]="auth.role() !== 'SystemAdmin' ? 'Admin only' : null">
                   Delete
@@ -90,6 +99,35 @@
             </tr>
           </tbody>
         </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- DELETE CONFIRM MODAL -->
+<div
+  class="modal fade show"
+  tabindex="-1"
+  *ngIf="showDeleteModal"
+  style="display: block; background: rgba(0,0,0,.5)">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Confirm Delete</h5>
+        <button
+          type="button"
+          class="btn-close"
+          (click)="cancelDelete()">
+        </button>
+      </div>
+
+      <div class="modal-body">
+        <p>Are you sure you want to delete this record?</p>
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn btn-light" (click)="cancelDelete()">Cancel</button>
+        <button class="btn btn-danger" (click)="confirmDelete()">Delete</button>
       </div>
     </div>
   </div>

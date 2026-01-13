@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterLink } from '@angular/router';
+import { RouterLink, ActivatedRoute } from '@angular/router';
 
 import { Header } from '../header/header';
 import { Records } from '../../services/records';
@@ -25,27 +25,61 @@ export class RecordsList implements OnInit {
 
   records: any[] = [];
 
+  // UI STATE
+  showDeleteModal = false;
+  selectedRecordId: number | null = null;
+  successMessage = '';
+
   constructor(
     public rs: Records,
-    public auth: Auth
+    public auth: Auth,
+    private route: ActivatedRoute
   ) {}
 
   ngOnInit(): void {
     this.loadRecords();
+
+    this.route.queryParams.subscribe(p => {
+      if (p['status'] === 'added') {
+        this.successMessage = 'New record added successfully.';
+      }
+      if (p['status'] === 'updated') {
+        this.successMessage = 'Record updated successfully.';
+      }
+    });
   }
 
   loadRecords(): void {
     this.rs.getAll().subscribe(r => this.records = r);
   }
 
-  remove(id: number): void {
-    if (confirm('Delete record?')) {
-      this.rs.delete(id).subscribe(() => this.loadRecords());
-    }
+  // =============================
+  // DELETE FLOW (GUI CONFIRM)
+  // =============================
+
+  askDelete(id: number): void {
+    this.selectedRecordId = id;
+    this.showDeleteModal = true;
+  }
+
+  cancelDelete(): void {
+    this.showDeleteModal = false;
+    this.selectedRecordId = null;
+  }
+
+  confirmDelete(): void {
+    if (!this.selectedRecordId) return;
+
+    this.rs.delete(this.selectedRecordId).subscribe(() => {
+      this.successMessage = 'Record deleted successfully.';
+      this.showDeleteModal = false;
+      this.selectedRecordId = null;
+      this.loadRecords();
+    });
   }
 
   // =============================
-  // STOCK LABEL (BRIEF COMPLIANT)
+  // STOCK LABEL
   // =============================
 
   stockLabel(quantity: number): string {
@@ -55,15 +89,15 @@ export class RecordsList implements OnInit {
   }
 
   // =============================
-  // GENRE → COLOUR MAPPING
+  // GENRE COLOUR MAPPING
   // =============================
 
   getGenreColorHex(genre: string): string {
     switch (genre) {
-      case 'Rock': return 'FFD1E8';        // pink
-      case 'Reggae': return 'C7F0BD';      // green
-      case 'Alternative': return 'D6E4FF'; // blue
-      default: return 'FFFFFF';            // white
+      case 'Rock': return 'FFD1E8';
+      case 'Reggae': return 'C7F0BD';
+      case 'Alternative': return 'D6E4FF';
+      default: return 'FFFFFF';
     }
   }
 
@@ -77,7 +111,7 @@ export class RecordsList implements OnInit {
   }
 
   // =============================
-  // EXPORT EXCEL (GENRE COLOURED)
+  // EXPORT EXCEL
   // =============================
 
   exportExcel(): void {
@@ -108,7 +142,6 @@ export class RecordsList implements OnInit {
       { wch: 14 }
     ];
 
-    // Header styling
     for (let c = 0; c < 6; c++) {
       const addr = XLSX.utils.encode_cell({ r: 0, c });
       if (ws[addr]) {
@@ -119,7 +152,6 @@ export class RecordsList implements OnInit {
       }
     }
 
-    // Genre-based row colouring
     for (let r = 1; r < data.length; r++) {
       const genre = data[r][4] as string;
 
@@ -150,7 +182,7 @@ export class RecordsList implements OnInit {
   }
 
   // =============================
-  // EXPORT PDF (GENRE COLOURED)
+  // EXPORT PDF
   // =============================
 
   exportPdf(): void {

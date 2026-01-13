@@ -15,7 +15,6 @@ export class RecordAdd implements OnInit {
   formats: string[] = [];
   genres: string[] = [];
 
-  // 🌍 Country codes (extend anytime)
   countryCodes = [
     { code: '+356', label: 'Malta (+356)' },
     { code: '+44', label: 'UK (+44)' },
@@ -46,7 +45,6 @@ export class RecordAdd implements OnInit {
       firstName: ['', Validators.required],
       lastName: ['', Validators.required],
 
-      // 👇 NEW
       countryCode: ['+356', Validators.required],
       contactNumber: ['', [Validators.required, Validators.pattern(/^[0-9]{8,}$/)]],
 
@@ -57,12 +55,11 @@ export class RecordAdd implements OnInit {
     this.rs.genres().subscribe(g => this.genres = g);
   }
 
+
   submit(): void {
     if (this.form.invalid) return;
 
     const v = this.form.value;
-
-    // 🔗 Combine country code + number
     const fullContactNumber = `${v.countryCode}${v.contactNumber}`;
 
     this.rs.add({
@@ -80,6 +77,10 @@ export class RecordAdd implements OnInit {
         contactNumber: fullContactNumber,
         email: v.email
       }
-    }).subscribe(() => this.router.navigate(['/records']));
+    }).subscribe(() =>
+      this.router.navigate(['/records'], {
+        queryParams: { status: 'added' }  
+      })
+    );
   }
 }

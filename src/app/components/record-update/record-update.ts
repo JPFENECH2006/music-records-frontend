@@ -16,7 +16,7 @@ export class RecordUpdate implements OnInit {
   formats: string[] = [];
   genres: string[] = [];
 
-  // 🌍 SAME country codes as ADD
+  // 🌍 country codes
   countryCodes = [
     { code: '+356', label: 'Malta (+356)' },
     { code: '+44', label: 'UK (+44)' },
@@ -49,7 +49,6 @@ export class RecordUpdate implements OnInit {
       firstName: ['', Validators.required],
       lastName: ['', Validators.required],
 
-      // 👇 split phone
       countryCode: ['+356', Validators.required],
       contactNumber: ['', [Validators.required, Validators.pattern(/^[0-9]{8,}$/)]],
 
@@ -62,7 +61,6 @@ export class RecordUpdate implements OnInit {
     this.rs.get(this.id).subscribe(r => {
       const phone = r.customer?.contactNumber || '';
 
-      // 🧠 split +code from number
       let countryCode = '+356';
       let localNumber = phone;
 
@@ -95,6 +93,10 @@ export class RecordUpdate implements OnInit {
     });
   }
 
+  // =============================
+  // UPDATE RECORD (✔ FIX HERE)
+  // =============================
+
   submit(): void {
     if (this.form.invalid) return;
 
@@ -116,6 +118,10 @@ export class RecordUpdate implements OnInit {
         contactNumber: fullContactNumber,
         email: v.email
       }
-    }).subscribe(() => this.router.navigate(['/records']));
+    }).subscribe(() =>
+      this.router.navigate(['/records'], {
+        queryParams: { status: 'updated' }
+      })
+    );
   }
 }
