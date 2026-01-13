@@ -45,14 +45,8 @@ export class RecordsList implements OnInit {
   }
 
   // =============================
-  // STOCK LOGIC (MATCHES BRIEF)
+  // STOCK LABEL (BRIEF COMPLIANT)
   // =============================
-
-  stockBadgeClass(quantity: number): string {
-    if (quantity === 0) return 'badge bg-danger';   // Out of Stock
-    if (quantity <= 3) return 'badge bg-warning';   // Low Stock
-    return 'badge bg-success';                      // In Stock
-  }
 
   stockLabel(quantity: number): string {
     if (quantity === 0) return 'Out of Stock';
@@ -61,7 +55,29 @@ export class RecordsList implements OnInit {
   }
 
   // =============================
-  // EXPORT EXCEL
+  // GENRE → COLOUR MAPPING
+  // =============================
+
+  getGenreColorHex(genre: string): string {
+    switch (genre) {
+      case 'Rock': return 'FFD1E8';        // pink
+      case 'Reggae': return 'C7F0BD';      // green
+      case 'Alternative': return 'D6E4FF'; // blue
+      default: return 'FFFFFF';            // white
+    }
+  }
+
+  getGenreColorRGB(genre: string): [number, number, number] {
+    switch (genre) {
+      case 'Rock': return [255, 209, 232];
+      case 'Reggae': return [199, 240, 189];
+      case 'Alternative': return [214, 228, 255];
+      default: return [255, 255, 255];
+    }
+  }
+
+  // =============================
+  // EXPORT EXCEL (GENRE COLOURED)
   // =============================
 
   exportExcel(): void {
@@ -73,7 +89,7 @@ export class RecordsList implements OnInit {
       r.customer?.lastName || '',
       r.format,
       r.genre,
-      this.stockLabel(r.stockQuantity)   // ✅ FIXED
+      this.stockLabel(r.stockQuantity)
     ]));
 
     const data = [
@@ -92,6 +108,7 @@ export class RecordsList implements OnInit {
       { wch: 14 }
     ];
 
+    // Header styling
     for (let c = 0; c < 6; c++) {
       const addr = XLSX.utils.encode_cell({ r: 0, c });
       if (ws[addr]) {
@@ -99,6 +116,24 @@ export class RecordsList implements OnInit {
           font: { bold: true },
           alignment: { horizontal: 'center' }
         };
+      }
+    }
+
+    // Genre-based row colouring
+    for (let r = 1; r < data.length; r++) {
+      const genre = data[r][4] as string;
+
+      for (let c = 0; c < 6; c++) {
+        const addr = XLSX.utils.encode_cell({ r, c });
+        if (ws[addr]) {
+          ws[addr].s = {
+            ...ws[addr].s,
+            fill: {
+              patternType: 'solid',
+              fgColor: { rgb: this.getGenreColorHex(genre) }
+            }
+          };
+        }
       }
     }
 
@@ -115,7 +150,7 @@ export class RecordsList implements OnInit {
   }
 
   // =============================
-  // EXPORT PDF
+  // EXPORT PDF (GENRE COLOURED)
   // =============================
 
   exportPdf(): void {
@@ -131,7 +166,7 @@ export class RecordsList implements OnInit {
       r.customer?.lastName || '',
       r.format,
       r.genre,
-      this.stockLabel(r.stockQuantity)   // ✅ FIXED
+      this.stockLabel(r.stockQuantity)
     ]));
 
     autoTable(doc, {
@@ -139,11 +174,10 @@ export class RecordsList implements OnInit {
       body,
       styles: { fontSize: 10 },
       didParseCell: (data) => {
-        if (data.section === 'body' && data.column.index === 5) {
-          const label = data.cell.text[0];
-          if (label === 'Out of Stock') data.cell.styles.fillColor = [220, 38, 38];
-          if (label === 'Low Stock') data.cell.styles.fillColor = [245, 158, 11];
-          if (label === 'In Stock') data.cell.styles.fillColor = [22, 163, 74];
+        if (data.section === 'body') {
+          const row = data.row.raw as any[];
+          const genre = row[4] as string;
+          data.cell.styles.fillColor = this.getGenreColorRGB(genre);
         }
       }
     });

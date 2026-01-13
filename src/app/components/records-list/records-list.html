@@ -25,7 +25,8 @@
       <a
         class="btn btn-primary"
         routerLink="/records/add"
-        *ngIf="auth.isLoggedIn()">
+        [class.disabled]="!auth.isLoggedIn()"
+        [attr.title]="!auth.isLoggedIn() ? 'Login required' : null">
         + Add Record
       </a>
     </div>
@@ -55,23 +56,28 @@
               <td>{{ r.genre }}</td>
 
               <td class="text-end pe-3">
+                <!-- VIEW (ALL USERS) -->
                 <a
                   class="btn btn-sm btn-outline-primary me-2"
                   [routerLink]="['/records/view', r.id]">
                   View
                 </a>
 
+                <!-- UPDATE (DISABLED FOR SALESPERSON) -->
                 <a
                   class="btn btn-sm btn-outline-warning me-2"
-                  *ngIf="auth.role() !== 'Salesperson'"
-                  [routerLink]="['/records/update', r.id]">
+                  [routerLink]="['/records/update', r.id]"
+                  [class.disabled]="auth.role() === 'Salesperson'"
+                  [attr.title]="auth.role() === 'Salesperson' ? 'Insufficient permissions' : null">
                   Update
                 </a>
 
+                <!-- DELETE (ADMIN ONLY – DISABLED, NOT HIDDEN) -->
                 <button
                   class="btn btn-sm btn-outline-danger"
-                  *ngIf="auth.role() === 'SystemAdmin'"
-                  (click)="remove(r.id)">
+                  (click)="remove(r.id)"
+                  [disabled]="auth.role() !== 'SystemAdmin'"
+                  [attr.title]="auth.role() !== 'SystemAdmin' ? 'Admin only' : null">
                   Delete
                 </button>
               </td>
