@@ -2,10 +2,7 @@
 
 <div class="app-shell">
   <div class="page-head">
-    <div>
-      <h2 class="page-title">Update Record</h2>
-      <p class="page-subtitle">Edit record and customer information.</p>
-    </div>
+    <h2 class="page-title">Update Record</h2>
     <a class="btn btn-light" routerLink="/records">Back</a>
   </div>
 
@@ -16,117 +13,98 @@
 
         <div class="row g-4">
 
-          <!-- LEFT -->
-          <div class="col-12 col-lg-6">
+          <!-- RECORD DETAILS -->
+          <div class="col-lg-6">
             <div class="section-label">Record details</div>
 
-            <div class="mb-3">
-              <label class="form-label fw-bold">Title</label>
-              <input class="form-control" formControlName="title">
+            <label class="form-label fw-bold">Title</label>
+            <input class="form-control mb-2" formControlName="title">
+
+            <label class="form-label fw-bold">Artist</label>
+            <input class="form-control mb-2" formControlName="artist">
+
+            <label class="form-label fw-bold">Format</label>
+            <select class="form-select mb-2" formControlName="format">
+              <option value="">Select format</option>
+              <option *ngFor="let f of formats" [value]="f">{{ f }}</option>
+            </select>
+
+            <label class="form-label fw-bold">Genre</label>
+            <select class="form-select mb-2" formControlName="genre">
+              <option value="">Select genre</option>
+              <option *ngFor="let g of genres" [value]="g">{{ g }}</option>
+            </select>
+
+            <label class="form-label fw-bold">Release Year</label>
+            <input class="form-control mb-1" formControlName="releaseYear"
+              [ngClass]="{'is-invalid': form.get('releaseYear')?.invalid && form.get('releaseYear')?.touched}">
+            <div class="text-danger small" *ngIf="form.get('releaseYear')?.invalid && form.get('releaseYear')?.touched">
+              Year must be exactly 4 digits
             </div>
 
-            <div class="mb-3">
-              <label class="form-label fw-bold">Artist</label>
-              <input class="form-control" formControlName="artist">
+            <label class="form-label fw-bold">Price (€)</label>
+            <input class="form-control mb-1" formControlName="price"
+              [ngClass]="{'is-invalid': form.get('price')?.invalid && form.get('price')?.touched}">
+            <div class="text-danger small" *ngIf="form.get('price')?.invalid && form.get('price')?.touched">
+              Numeric value only
             </div>
 
-            <div class="row g-3">
-              <div class="col-md-6">
-                <label class="form-label fw-bold">Format</label>
-                <select class="form-select" formControlName="format">
-                  <option value="">Select format</option>
-                  <option *ngFor="let f of formats" [value]="f">{{ f }}</option>
-                </select>
-              </div>
-
-              <div class="col-md-6">
-                <label class="form-label fw-bold">Genre</label>
-                <select class="form-select" formControlName="genre">
-                  <option value="">Select genre</option>
-                  <option *ngFor="let g of genres" [value]="g">{{ g }}</option>
-                </select>
-              </div>
-
-              <div class="col-md-4">
-                <label class="form-label fw-bold">Release Year</label>
-                <input class="form-control" formControlName="releaseYear">
-              </div>
-
-              <div class="col-md-4">
-                <label class="form-label fw-bold">Price (€)</label>
-                <input class="form-control" formControlName="price">
-              </div>
-
-              <div class="col-md-4">
-                <label class="form-label fw-bold">Stock Qty</label>
-                <input class="form-control" formControlName="stockQuantity">
-              </div>
+            <label class="form-label fw-bold">Stock Quantity</label>
+            <input class="form-control mb-1" formControlName="stockQuantity"
+              [ngClass]="{'is-invalid': form.get('stockQuantity')?.invalid && form.get('stockQuantity')?.touched}">
+            <div class="text-danger small" *ngIf="form.get('stockQuantity')?.invalid && form.get('stockQuantity')?.touched">
+              Whole numbers only
             </div>
           </div>
 
-          <!-- RIGHT -->
-          <div class="col-12 col-lg-6">
+          <!-- CUSTOMER DETAILS -->
+          <div class="col-lg-6">
             <div class="section-label">Customer details</div>
 
-            <div class="mb-3">
-              <label class="form-label fw-bold">Customer ID</label>
-              <input class="form-control" formControlName="customerId">
+            <label class="form-label fw-bold">Customer ID</label>
+            <input class="form-control mb-2" formControlName="customerId">
+
+            <label class="form-label fw-bold">First Name</label>
+            <input class="form-control mb-1" formControlName="firstName"
+              [ngClass]="{'is-invalid': form.get('firstName')?.invalid && form.get('firstName')?.touched}">
+            <div class="text-danger small" *ngIf="form.get('firstName')?.invalid && form.get('firstName')?.touched">
+              Letters only
             </div>
 
-            <div class="row g-3">
-              <div class="col-md-6">
-                <label class="form-label fw-bold">First Name</label>
-                <input class="form-control" formControlName="firstName">
-              </div>
+            <label class="form-label fw-bold">Last Name</label>
+            <input class="form-control mb-1" formControlName="lastName"
+              [ngClass]="{'is-invalid': form.get('lastName')?.invalid && form.get('lastName')?.touched}">
+            <div class="text-danger small" *ngIf="form.get('lastName')?.invalid && form.get('lastName')?.touched">
+              Letters only
+            </div>
 
-              <div class="col-md-6">
-                <label class="form-label fw-bold">Last Name</label>
-                <input class="form-control" formControlName="lastName">
-              </div>
+            <label class="form-label fw-bold">Contact Number</label>
+            <div class="input-group mb-1">
+              <select class="form-select" formControlName="countryCode">
+                <option *ngFor="let c of countryCodes" [value]="c.code">{{ c.label }}</option>
+              </select>
+              <input class="form-control" formControlName="contactNumber"
+                [ngClass]="{'is-invalid': form.get('contactNumber')?.invalid && form.get('contactNumber')?.touched}">
+            </div>
+            <div class="text-danger small" *ngIf="form.get('contactNumber')?.invalid && form.get('contactNumber')?.touched">
+              Numeric, minimum 8 digits
+            </div>
 
-              <!-- 📞 CONTACT NUMBER -->
-              <div class="col-md-12">
-                <label class="form-label fw-bold">Contact Number</label>
-
-                <div class="input-group">
-                  <select
-                    class="form-select"
-                    style="max-width: 160px"
-                    formControlName="countryCode"
-                  >
-                    <option *ngFor="let c of countryCodes" [value]="c.code">
-                      {{ c.label }}
-                    </option>
-                  </select>
-
-                  <input
-                    class="form-control"
-                    formControlName="contactNumber"
-                    placeholder="77123456"
-                  >
-                </div>
-              </div>
-
-              <div class="col-md-12">
-                <label class="form-label fw-bold">Email</label>
-                <input class="form-control" formControlName="email">
-              </div>
+            <label class="form-label fw-bold">Email</label>
+            <input class="form-control mb-1" formControlName="email"
+              [ngClass]="{'is-invalid': form.get('email')?.invalid && form.get('email')?.touched}">
+            <div class="text-danger small" *ngIf="form.get('email')?.invalid && form.get('email')?.touched">
+              Valid email required
             </div>
           </div>
 
         </div>
 
-        <hr class="hr-soft">
-
-        <div class="d-flex justify-content-end gap-2">
-          <a class="btn btn-light" routerLink="/records">Cancel</a>
-          <button class="btn btn-warning px-4" [disabled]="form.invalid">
-            Update
-          </button>
+        <div class="text-end mt-3">
+          <button class="btn btn-warning px-4" [disabled]="form.invalid">Update</button>
         </div>
 
       </form>
-
     </div>
   </div>
 </div>

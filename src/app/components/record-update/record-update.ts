@@ -16,7 +16,6 @@ export class RecordUpdate implements OnInit {
   formats: string[] = [];
   genres: string[] = [];
 
-  // 🌍 country codes
   countryCodes = [
     { code: '+356', label: 'Malta (+356)' },
     { code: '+44', label: 'UK (+44)' },
@@ -41,16 +40,43 @@ export class RecordUpdate implements OnInit {
       artist: ['', Validators.required],
       format: ['', Validators.required],
       genre: ['', Validators.required],
-      releaseYear: ['', Validators.required],
-      price: ['', Validators.required],
-      stockQuantity: ['', Validators.required],
 
-      customerId: ['', [Validators.required, Validators.pattern(/^[0-9]+[A-Za-z]$/)]],
-      firstName: ['', Validators.required],
-      lastName: ['', Validators.required],
+      releaseYear: [
+        '',
+        [Validators.required, Validators.pattern(/^[0-9]{4}$/)]
+      ],
+
+      price: [
+        '',
+        [Validators.required, Validators.pattern(/^[0-9]+(\.[0-9]{1,2})?$/)]
+      ],
+
+      stockQuantity: [
+        '',
+        [Validators.required, Validators.pattern(/^[0-9]+$/)]
+      ],
+
+      customerId: [
+        '',
+        [Validators.required, Validators.pattern(/^[0-9]+[A-Za-z]$/)]
+      ],
+
+      firstName: [
+        '',
+        [Validators.required, Validators.pattern(/^[A-Za-z]+$/)]
+      ],
+
+      lastName: [
+        '',
+        [Validators.required, Validators.pattern(/^[A-Za-z]+$/)]
+      ],
 
       countryCode: ['+356', Validators.required],
-      contactNumber: ['', [Validators.required, Validators.pattern(/^[0-9]{8,}$/)]],
+
+      contactNumber: [
+        '',
+        [Validators.required, Validators.pattern(/^[0-9]{8,}$/)]
+      ],
 
       email: ['', [Validators.required, Validators.email]]
     });
@@ -60,16 +86,13 @@ export class RecordUpdate implements OnInit {
 
     this.rs.get(this.id).subscribe(r => {
       const phone = r.customer?.contactNumber || '';
-
       let countryCode = '+356';
       let localNumber = phone;
 
-      if (phone.startsWith('+')) {
-        const match = this.countryCodes.find(c => phone.startsWith(c.code));
-        if (match) {
-          countryCode = match.code;
-          localNumber = phone.replace(match.code, '');
-        }
+      const match = this.countryCodes.find(c => phone.startsWith(c.code));
+      if (match) {
+        countryCode = match.code;
+        localNumber = phone.replace(match.code, '');
       }
 
       this.form.patchValue({
@@ -77,31 +100,23 @@ export class RecordUpdate implements OnInit {
         artist: r.artist,
         format: r.format,
         genre: r.genre,
-        releaseYear: String(r.releaseYear),
-        price: String(r.price),
-        stockQuantity: String(r.stockQuantity),
-
+        releaseYear: r.releaseYear,
+        price: r.price,
+        stockQuantity: r.stockQuantity,
         customerId: r.customer?.customerId,
         firstName: r.customer?.firstName,
         lastName: r.customer?.lastName,
-
         countryCode,
         contactNumber: localNumber,
-
         email: r.customer?.email
       });
     });
   }
 
-  // =============================
-  // UPDATE RECORD (✔ FIX HERE)
-  // =============================
-
   submit(): void {
     if (this.form.invalid) return;
 
     const v = this.form.value;
-    const fullContactNumber = `${v.countryCode}${v.contactNumber}`;
 
     this.rs.update(this.id, {
       title: v.title,
@@ -115,13 +130,9 @@ export class RecordUpdate implements OnInit {
         customerId: v.customerId,
         firstName: v.firstName,
         lastName: v.lastName,
-        contactNumber: fullContactNumber,
+        contactNumber: `${v.countryCode}${v.contactNumber}`,
         email: v.email
       }
-    }).subscribe(() =>
-      this.router.navigate(['/records'], {
-        queryParams: { status: 'updated' }
-      })
-    );
+    }).subscribe(() => this.router.navigate(['/records']));
   }
 }
