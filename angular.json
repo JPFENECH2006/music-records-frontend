@@ -37,14 +37,21 @@
               "budgets": [
                 {
                   "type": "initial",
-                  "maximumWarning": "500kB",
-                  "maximumError": "1MB"
+                  "maximumWarning": "3MB",
+                  "maximumError": "5MB"
                 },
                 {
                   "type": "anyComponentStyle",
                   "maximumWarning": "4kB",
                   "maximumError": "8kB"
                 }
+              ],
+              "allowedCommonJsDependencies": [
+                "xlsx-js-style",
+                "file-saver",
+                "jspdf",
+                "html2canvas",
+                "canvg"
               ],
               "outputHashing": "all"
             },
